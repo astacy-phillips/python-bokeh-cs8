@@ -9,11 +9,11 @@ from graph import *
 
 WIDTH = 640
 HEIGHT = 480  # TODO: Currently graph renders square, scale to numbers here.
-CIRCLE_SIZE = 25
+CIRCLE_SIZE = 30
 
 graph_data = Graph()
-graph_data.debug_create_test_data()
-graph_data.bfs(graph_data.vertexes[0])
+graph_data.randomize(5, 4, 115, 0.6)
+graph_data.connected_components()
 print(graph_data.vertexes)
 
 N = len(graph_data.vertexes)
@@ -23,9 +23,6 @@ color_list = []
 for vertex in graph_data.vertexes:
     color_list.append(vertex.color)
 
-# debug_pallette = Spectral8
-# debug_pallette.append('#FF0000')
-# debug_pallette.append('#0000FF')
 
 plot = figure(title='Graph Layout Demonstration', x_range=(0, WIDTH), y_range=(0, HEIGHT),
               tools='', plot_width=WIDTH, plot_height=HEIGHT, toolbar_location=None)
