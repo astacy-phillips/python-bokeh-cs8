@@ -33,24 +33,20 @@ graph.node_renderer.glyph = Circle(size=20, fill_color='color')
 
 
 # This is drawing the edges for start to end
-graph.edge_renderer.data_source.data = dict(
-    start=node_indices,  # this is why all the edges start from the first vertex
-    end=node_indices[1:])
+
+def get_edge_indexes(graph):
+    start_indexes = []
+    end_indexes = []
+
+    for start_index, vertex in enumerate(graph_data.vertexes):
+        for edge in vertex.edges:
+            start_indexes.append(start_index)
+            end_indexes.append(graph_data.vertexes.index(edge.destination))
+
+    return dict(start=start_indexes, end=end_indexes)
 
 
-# def get_edge_indexes(graph):
-#     start_indices = []
-#     end_indices = []
-
-#     for start, vertex in enumerate(graph_data.vertexes):
-#         for ed in vertex.edges:
-#             start_indices.append(start)
-#             end_indices.append(graph_data.vertexes.index(ed.destination))
-
-#     return dict(start=start_indices, end=end_indices)
-
-
-# graph.edge_renderer.data_source.data = get_edge_indexes(graph)
+graph.edge_renderer.data_source.data = get_edge_indexes(graph)
 
 
 def get_positions():
