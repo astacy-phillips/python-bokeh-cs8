@@ -7,8 +7,13 @@ from bokeh.palettes import Spectral8
 
 from graph import *
 
+WIDTH = 640
+HEIGHT = 480  # TODO: Currently graph renders square, scale to numbers here.
+CIRCLE_SIZE = 25
+
 graph_data = Graph()
 graph_data.debug_create_test_data()
+graph_data.bfs(graph_data.vertexes[0])
 print(graph_data.vertexes)
 
 N = len(graph_data.vertexes)
@@ -22,14 +27,14 @@ for vertex in graph_data.vertexes:
 # debug_pallette.append('#FF0000')
 # debug_pallette.append('#0000FF')
 
-plot = figure(title='Graph Layout Demonstration', x_range=(0, 500), y_range=(0, 500),
-              tools='', toolbar_location=None)
+plot = figure(title='Graph Layout Demonstration', x_range=(0, WIDTH), y_range=(0, HEIGHT),
+              tools='', plot_width=WIDTH, plot_height=HEIGHT, toolbar_location=None)
 
 graph = GraphRenderer()
 
 graph.node_renderer.data_source.add(node_indices, 'index')
 graph.node_renderer.data_source.add(color_list, 'color')
-graph.node_renderer.glyph = Circle(size=20, fill_color='color')
+graph.node_renderer.glyph = Circle(size=CIRCLE_SIZE, fill_color='color')
 
 
 # This is drawing the edges for start to end
@@ -48,9 +53,10 @@ def get_edge_indexes(graph):
 
 graph.edge_renderer.data_source.data = get_edge_indexes(graph)
 
-
-def get_positions():
-    return [v.pos for v in graph_data.vertexes]
+x = [v.pos['x'] for v in graph_data.vertexes]
+y = [v.pos['y'] for v in graph_data.vertexes]
+# def get_positions():
+#     return [v.pos for v in graph_data.vertexes]
 
 
 def get_values():
@@ -58,19 +64,18 @@ def get_values():
 
 
 def setup_labels(graph):
-    labelSource = ColumnDataSource(data=dict(
-        x=[pos['x'] for pos in get_positions()],
-        y=[pos['y'] for pos in get_positions()],
+    label_source = ColumnDataSource(data=dict(
+        # x=[pos['x'] for pos in get_positions()],
+        # y=[pos['y'] for pos in get_positions()],
+        x=x,
+        y=y,
         values=get_values()))
 
-    labels = LabelSet(x='x', y='y', text='values', level='glyph', text_align='center',
-                      text_baseline='middle', source=labelSource, render_mode='canvas')
+    labels = LabelSet(x='x', y='y', text='values', level='overlay', text_align='center',
+                      text_baseline='middle', source=label_source, render_mode='canvas')
 
     return labels
 
-
-x = [v.pos['x'] for v in graph_data.vertexes]
-y = [v.pos['y'] for v in graph_data.vertexes]
 
 graph_layout = dict(zip(node_indices, zip(x, y)))
 graph.layout_provider = StaticLayoutProvider(graph_layout=graph_layout)
